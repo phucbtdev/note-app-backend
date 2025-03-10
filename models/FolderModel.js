@@ -5,7 +5,7 @@ const folderSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    auhthorID: {
+    authorId: {
         type: String,
         required: true
     }
