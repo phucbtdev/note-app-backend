@@ -30,11 +30,9 @@ app.use(
     expressMiddleware(server),
 );
 
-mongoose.connect(URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(async () => {
-    await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
-    console.log(`🚀 Server ready at http://localhost:4000`);
-})
+mongoose.connect(URI)
+    .then(async () => {
+        await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+        console.log(`🚀 Server ready at http://localhost:4000`);
+    })
 
