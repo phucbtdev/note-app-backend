@@ -11,25 +11,34 @@ export const resolvers = {
         },
         folder: async (parent, agrs) => {
             const folderId = agrs.folderId;
-            const folders = await FolderModel.find();
+            const folder = await FolderModel.findOne({ _id: folderId });
 
-            return folders.find(folder => folder.id == folderId)
+            return folder
         },
         note: async (parent, agrs) => {
             const noteId = agrs.noteId;
-            const notes = await NoteModel.find();
+            const note = await NoteModel.find({ id: noteId });
 
-            return notes.find(note => note.id == noteId)
+            return note
         }
     },
     Folder: {
-        author: (parent, agrs) => {
+        author: async (parent, agrs) => {
             const authorId = parent.authorId
-            return fakeDdata.authors.find(author => author.id == authorId)
+            const author = await AuthorModel.find(author => author.id == authorId)
+            return author
         },
         note: (parent, agrs) => {
-            return fakeDdata.notes.filter(note => note.folderId === parent.id)
+            const folderId = parent.id
+            return fakeDdata.notes.filter(note => note.folderId === folderId)
         }
     },
 
+    Mutation: {
+        addFolder: async (parent, agrs) => {
+            const newfolder = new FolderModel({ ...agrs, authorId: '123' });
+            await newfolder.save();
+            return newfolder;
+        }
+    }
 };
