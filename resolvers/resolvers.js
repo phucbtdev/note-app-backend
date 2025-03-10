@@ -1,16 +1,25 @@
 import fakeDdata from '../fakeData/index.js'
+import { AuthorModel, FolderModel, NoteModel } from '../models/index.js';
 
 export const resolvers = {
     Query: {
-        authors: () => fakeDdata.authors,
-        folders: () => fakeDdata.folders,
-        folder: (parent, agrs) => {
-            const folderId = agrs.folderId
-            return fakeDdata.folders.find(folder => folder.id == folderId)
+        authors: async () => await AuthorModel.find(),
+        folders: async () => {
+            const folders = await FolderModel.find();
+
+            return folders
         },
-        note: (parent, agrs) => {
-            const noteId = agrs.noteId
-            return fakeDdata.notes.find(note => note.id == noteId)
+        folder: async (parent, agrs) => {
+            const folderId = agrs.folderId;
+            const folders = await FolderModel.find();
+
+            return folders.find(folder => folder.id == folderId)
+        },
+        note: async (parent, agrs) => {
+            const noteId = agrs.noteId;
+            const notes = await NoteModel.find();
+
+            return notes.find(note => note.id == noteId)
         }
     },
     Folder: {
