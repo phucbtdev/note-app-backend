@@ -7,6 +7,7 @@ import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import 'dotenv/config'
+import './firebaseConfig.js'
 import { typeDefs } from './schemas/typDefs.js'
 import { resolvers } from './resolvers/resolvers.js';
 
