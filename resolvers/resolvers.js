@@ -4,8 +4,10 @@ import { AuthorModel, FolderModel, NoteModel } from '../models/index.js';
 export const resolvers = {
     Query: {
         authors: async () => await AuthorModel.find(),
-        folders: async () => {
-            const folders = await FolderModel.find();
+        folders: async (parent, agrs, context) => {
+            const folders = await FolderModel.find({
+                authorId: context.uid
+            });
 
             return folders
         },

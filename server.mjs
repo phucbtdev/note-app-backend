@@ -11,6 +11,8 @@ import './firebaseConfig.js'
 import { typeDefs } from './schemas/typDefs.js'
 import { resolvers } from './resolvers/resolvers.js';
 
+import firebaseAdmin from 'firebase-admin'
+
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -25,12 +27,36 @@ const server = new ApolloServer({
 });
 await server.start();
 
+const authorizationJWT = async (req, res, next) => {
+    const authorizationHeader = req.headers.authorization;
+    if (authorizationHeader) {
+        const accessToken = authorizationHeader.split(' ')[1];
+        firebaseAdmin.auth()
+            .verifyIdToken(accessToken)
+            .then((decodedToken) => {
+                res.locals.uid = decodedToken.uid
+                next()
+            })
+            .catch((err) => {
+                return res.status(403).json({ message: 'Forbidden', error: err })
+            })
+    } else {
+        return res.status(401).json({ message: 'Unauthorized' })
+    }
+
+}
+
 app.use(
     cors(),
+    authorizationJWT,
     bodyParser.json(),
-    expressMiddleware(server),
+    expressMiddleware(server, {
+        context: ({ req, res }) => {
+            return { uid: res.locals.uid }
+        }
+    }),
 );
-
+mongoose.set('strictQuery', false)
 mongoose.connect(URI)
     .then(async () => {
         await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
